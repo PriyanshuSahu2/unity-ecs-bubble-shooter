@@ -12,15 +12,23 @@ namespace Game.View
         [SerializeField] private Rigidbody2D _rigidbody = default;
         [SerializeField] private TrailRenderer _trail = default;
 
+      
         public SpriteRenderer Renderer => _renderer;
         public Collider2D Collider => _collider;
         public Rigidbody2D Rigidbody => _rigidbody;
         public TrailRenderer Trail => _trail;
+        private void Awake()
+        {
+            
+        }
         public void SetNumber(int value)
         {
+           
+           
             if (value < 1024)
             {
                 _text.SetText("{0}", value);
+                
             }
             else
             {

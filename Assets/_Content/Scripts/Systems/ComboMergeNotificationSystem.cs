@@ -28,6 +28,7 @@ namespace Game.Ecs.Systems
             var position = _scene.Camera.ViewportToWorldPoint(Vector3.one * .5f);
             var text = Object.Instantiate(_config.MergePopupText, position, Quaternion.identity);
             text._text.SetText("{0}X", index);
+            
             text._text.fontSize = 10;
         }
     }

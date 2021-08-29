@@ -12,6 +12,7 @@ namespace Game.Ecs.Systems
         {
             foreach (var i in _bubbleFilter)
             {
+               
                 var entity = _bubbleFilter.GetEntity(i);
                 entity.Get<Destroyed>();
                 entity.Del<Merging>();

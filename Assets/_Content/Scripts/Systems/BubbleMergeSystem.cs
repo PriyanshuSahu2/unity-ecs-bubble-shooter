@@ -5,18 +5,20 @@ using UnityEngine;
 
 namespace Game.Ecs.Systems
 {
+    [System.Serializable]
     public sealed class BubbleMergeSystem : IEcsInitSystem, IEcsRunSystem
     {
+       
+       
         private readonly EcsWorld _world = default;
-        private readonly IConfig _config = default;
-
+        private readonly IConfig _config = default; 
         private readonly EcsFilter<Bubble, Merge, Position> _newBubbleFilter = default;
         private readonly EcsFilter<Bubble, Position> _bubbleFilter = default;
         private readonly EcsFilter<Moving> _movingFilter = default;
 
         private Dictionary<Vector2Int, EcsEntity> _map;
         private HashSet<EcsEntity> _toMerge;
-
+        
         void IEcsInitSystem.Init()
         {
             var boardSize = _config.BoardSize.x * _config.BoardSize.y;
@@ -47,7 +49,10 @@ namespace Game.Ecs.Systems
                 return;
             }
 
-            var mergedValue = newBubbleValue * (1 << _toMerge.Count - 1);
+             var mergedValue = newBubbleValue * (1 << _toMerge.Count - 1);
+            
+            CalculateScore(mergedValue);
+          
             if (mergedValue > 2048)
             {
                 mergedValue = 2048;
@@ -55,6 +60,7 @@ namespace Game.Ecs.Systems
 
             var mergeBubble = GetMergeBubble(_toMerge, mergedValue);
             var mergePosition = mergeBubble.Get<Position>().Value;
+
 
             foreach (var bubble in _toMerge)
             {
@@ -67,7 +73,13 @@ namespace Game.Ecs.Systems
             newBubble.Get<Position>().Value = mergePosition;
             newBubble.Get<Merge>().Index = mergeIndex + 1;
         }
-
+        public void CalculateScore(int score)
+        {
+            int temp = PlayerPrefs.GetInt("Score");
+            temp += score;
+            PlayerPrefs.SetInt("Score", temp);
+            
+        }
         private void UpdateMap()
         {
             _map.Clear();
@@ -77,6 +89,7 @@ namespace Game.Ecs.Systems
                 _map[_bubbleFilter.Get2(i).Value] = _bubbleFilter.GetEntity(i);
             }
         }
+
 
         private void GetBubblesToMerge(Vector2Int position, int value, HashSet<EcsEntity> result)
         {
@@ -137,5 +150,8 @@ namespace Game.Ecs.Systems
 
             return bestBubble.IsNull() ? highestBubble : bestBubble;
         }
+
+
     }
+
 }
